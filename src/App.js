@@ -1,12 +1,14 @@
 import React from 'react';
 import './App.css';
 import List from './components/List';
+import Form from './components/Form';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasks: []
+            tasks: [],
+            isDisplayForm: false
         };
     }
 
@@ -17,7 +19,6 @@ class App extends React.Component {
                 tasks: tasks
             });
         }
-        console.log(tasks);
     }
 
     rdId = () => {
@@ -56,11 +57,17 @@ class App extends React.Component {
             tasks: tasks
         });
         localStorage.setItem('tasks', JSON.stringify(tasks));
-        window.location.reload();
+    }
+
+    onToggleForm = () => {
+        this.setState({
+            isDisplayForm: !this.state.isDisplayForm
+        });
     }
 
     render() {
-        var { tasks } = this.state;
+        var { tasks, isDisplayForm } = this.state;
+        var elmForm = isDisplayForm ? <Form /> : '';
         return (
             <div className="container">
                 <div className="row justify-content-center pt-4">
@@ -68,32 +75,17 @@ class App extends React.Component {
                 </div>
                 <hr />
                 <div className="row">
-                    <div className="col-4">
-                        <div className="card">
-                            <h4 className="card-header">Title</h4>
-                            <div className="card-body">
-                                <div class="form-group">
-                                    <label for="">Tên</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Trạng thái</label>
-                                    <select class="form-control">
-                                        <option>Kích hoạt</option>
-                                        <option>Chưa kích hoạt</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="card-footer justify-content-center d-flex">
-                                <button type="button" class="btn btn-primary mr-2">Lưu lại</button>
-                                <button type="button" class="btn btn-warning">Hủy bỏ</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-8">
+                    { elmForm }
+                    <div className={ isDisplayForm ? 'col-8' : 'col-12' }>
                         <div className="row d-flex">
                             <div className="col-12">
-                                <button type="button" className="btn btn-primary mr-2">Thêm công việc</button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-primary mr-2"
+                                    onClick={ this.onToggleForm }
+                                >
+                                    Thêm công việc
+                                </button>
                                 <button type="button" className="btn btn-default" onClick={this.createData}>Create Data</button>
                             </div>
                         </div>
