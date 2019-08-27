@@ -8,7 +8,7 @@ export default class App extends React.Component {
         super(props);
         this.state = {
             tasks: [],
-            isDisplayForm: true,
+            isDisplayForm: false,
             taskEdit: null
         };
     }
@@ -61,8 +61,12 @@ export default class App extends React.Component {
     }
 
     onToggleForm = (value = null) => {
+        var checkDisplay;
+        if (value === 'close') checkDisplay = false;
+        else if (value === 'open') checkDisplay = true;
+        else checkDisplay = !this.state.isDisplayForm;
         this.setState({
-            isDisplayForm: (value === 'close') ? false : !this.state.isDisplayForm
+            isDisplayForm: checkDisplay
         });
     }
 
@@ -123,11 +127,12 @@ export default class App extends React.Component {
         }, () => {
             console.log(this.state.taskEdit);
         });
+        this.onToggleForm('open');
     }
 
     render() {
-        var { tasks, isDisplayForm } = this.state;
-        var elmForm = isDisplayForm ? <Form onSubmitForm={ this.onSubmitForm } onToggleForm={ this.onToggleForm } /> : '';
+        var { tasks, isDisplayForm, taskEdit } = this.state;
+        var elmForm = isDisplayForm ? <Form taskEdit={ taskEdit } onSubmitForm={ this.onSubmitForm } onToggleForm={ this.onToggleForm } /> : '';
         return (
             <div className="container">
                 <div className="row justify-content-center pt-4">
