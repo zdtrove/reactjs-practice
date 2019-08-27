@@ -3,12 +3,13 @@ import './App.css';
 import List from './components/List';
 import Form from './components/Form';
 
-class App extends React.Component {
+export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             tasks: [],
-            isDisplayForm: false
+            isDisplayForm: true,
+            taskEdit: null
         };
     }
 
@@ -59,15 +60,74 @@ class App extends React.Component {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    onToggleForm = () => {
+    onToggleForm = (value = null) => {
         this.setState({
-            isDisplayForm: !this.state.isDisplayForm
+            isDisplayForm: (value === 'close') ? false : !this.state.isDisplayForm
+        });
+    }
+
+    onSubmitForm = (data) => {
+        var task = {
+            id: this.rdId(),
+            name: data.name,
+            status: data.status
+        }
+        var { tasks } = this.state;
+        tasks.push(task);
+        this.setState({
+            tasks : tasks
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    onUpdateStatus = (id) => {
+        var { tasks } = this.state;
+        var index = this.findIndex(id);
+        if (index !== -1) {
+            tasks[index].status = !tasks[index].status;
+            this.setState({
+                tasks : tasks
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    }
+
+    findIndex = (id) => {
+        var { tasks } = this.state;
+        var result = -1;
+        tasks.forEach((task, index) => {
+            if (task.id === id) {
+                result = index;
+            }
+        });
+        return result;
+    }
+
+    onDelete = (id) => {
+        var { tasks } = this.state;
+        var index = this.findIndex(id);
+        if (index !== -1) {
+            tasks.splice(index, 1);
+            this.setState({
+                tasks : tasks
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    }
+
+    onUpdate = (id) => {
+        var { tasks } = this.state;
+        var index = this.findIndex(id);
+        this.setState({
+            taskEdit: tasks[index]
+        }, () => {
+            console.log(this.state.taskEdit);
         });
     }
 
     render() {
         var { tasks, isDisplayForm } = this.state;
-        var elmForm = isDisplayForm ? <Form /> : '';
+        var elmForm = isDisplayForm ? <Form onSubmitForm={ this.onSubmitForm } onToggleForm={ this.onToggleForm } /> : '';
         return (
             <div className="container">
                 <div className="row justify-content-center pt-4">
@@ -84,7 +144,7 @@ class App extends React.Component {
                                     className="btn btn-primary mr-2"
                                     onClick={ this.onToggleForm }
                                 >
-                                    Thêm công việc
+                                    <i className="far fa-plus-square pr-1"></i>Thêm công việc
                                 </button>
                                 <button type="button" className="btn btn-default" onClick={this.createData}>Create Data</button>
                             </div>
@@ -97,16 +157,19 @@ class App extends React.Component {
                                     <div className="input-group-append">
                                         <button className="btn btn-primary">Tìm</button>
                                     </div>
-                                    <button type="button" class="btn btn-primary ml-4">Sắp xếp</button>
+                                    <button type="button" className="btn btn-primary ml-4">Sắp xếp</button>
                                 </div>
                             </div>
                         </div>
-                        <List tasks={tasks} />
+                        <List
+                            onUpdate={ this.onUpdate }
+                            onDelete={ this.onDelete } 
+                            onUpdateStatus={ this.onUpdateStatus } 
+                            tasks={ tasks } 
+                        />
                     </div>
                 </div>
             </div>
         )
     }
 }
-
-export default App;

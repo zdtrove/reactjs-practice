@@ -1,17 +1,37 @@
 import React from 'react';
 
-const Item = (props) => {
-    return (
-        <tr>
-            <td>{ props.index + 1 }</td>
-            <td>{ props.task.name }</td>
-            <td>Kích hoạt</td>
-            <td className="d-flex">
-                <button type="button" className="btn btn-primary mr-2">Sửa</button>
-                <button type="button" className="btn btn-primary">Xóa</button>
-            </td>
-        </tr>
-    )
-}
+export default class Item extends React.Component {
+    onUpdateStatus = () => {
+        this.props.onUpdateStatus(this.props.task.id);
+    }
 
-export default Item;
+    onDelete = () => {
+        this.props.onDelete(this.props.task.id);
+    }
+
+    onUpdate = () => {
+        this.props.onUpdate(this.props.task.id);
+    }
+
+    render() {
+        var { task } = this.props;
+        return (
+            <tr>
+                <td>{ this.props.index + 1 }</td>
+                <td>{ task.name }</td>
+                <td>
+                    <span 
+                        className={task.status === true ? 'badge badge-success' : 'badge badge-danger' }
+                        onClick={ this.onUpdateStatus }
+                    >
+                        { task.status === true ? 'Kích hoạt' : 'Ẩn' }
+                    </span>
+                </td>
+                <td className="d-flex">
+                    <button type="button" className="btn btn-primary mr-2" onClick={ this.onUpdate }>Sửa</button>
+                    <button type="button" className="btn btn-primary" onClick={ this.onDelete }>Xóa</button>
+                </td>
+            </tr>
+        )
+    }
+}
