@@ -71,13 +71,18 @@ export default class App extends React.Component {
     }
 
     onSubmitForm = (data) => {
-        var task = {
-            id: this.rdId(),
-            name: data.name,
-            status: data.status
-        }
         var { tasks } = this.state;
-        tasks.push(task);
+        if (data.id === '') {
+            var task = {
+                id: this.rdId(),
+                name: data.name,
+                status: data.status
+            }
+            tasks.push(task);
+        } else {
+            var index = this.findIndex(data.id);
+            tasks[index] = data;
+        }
         this.setState({
             tasks : tasks
         });
@@ -125,7 +130,7 @@ export default class App extends React.Component {
         this.setState({
             taskEdit: tasks[index]
         }, () => {
-            console.log(this.state.taskEdit);
+            // console.log(this.state.taskEdit);
         });
         this.onToggleForm('open');
     }

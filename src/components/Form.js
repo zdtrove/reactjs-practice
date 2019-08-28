@@ -14,7 +14,7 @@ export default class Form extends React.Component {
         };
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         if (this.props.taskEdit) {
             this.setState({
                 id: this.props.taskEdit.id,
